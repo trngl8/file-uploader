@@ -9,6 +9,7 @@
 
 <input type="file" id="fileInput" />
 <button onclick="uploadFile()">Upload File</button>
+<div id="uploadedFileContainer"></div>
 
 <script>
     function uploadFile() {
@@ -42,11 +43,22 @@
                         uploadChunk();
                     } else {
                         console.log('Upload complete!');
+                        showUploadedFile();
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
+        }
+
+        function showUploadedFile() {
+            const uploadedFileContainer = document.getElementById('uploadedFileContainer');
+            uploadedFileContainer.innerHTML = `<p>File Uploaded Successfully!</p>`;
+            const downloadLink = document.createElement('a');
+            downloadLink.href = 'uploads/uploaded_file';
+            downloadLink.textContent = 'Download File';
+            downloadLink.download = file.name;
+            uploadedFileContainer.appendChild(downloadLink);
         }
 
         uploadChunk();
