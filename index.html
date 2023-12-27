@@ -9,6 +9,10 @@
 
 <input type="file" id="fileInput" />
 <button onclick="uploadFile()">Upload File</button>
+<div id="progressContainer">
+    <progress id="progressBar" value="0" max="100"></progress>
+    <span id="progressText">0%</span>
+</div>
 <div id="uploadedFileContainer"></div>
 
 <script>
@@ -40,6 +44,8 @@
                     currentChunk++;
 
                     if (currentChunk < totalChunks) {
+                        const percentComplete = ((currentChunk + 1) / totalChunks) * 100;
+                        updateProgress(percentComplete);
                         uploadChunk();
                     } else {
                         console.log('Upload complete!');
@@ -49,6 +55,14 @@
                 .catch(error => {
                     console.error('Error:', error);
                 });
+        }
+
+        function updateProgress(percentComplete) {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+
+            progressBar.value = percentComplete;
+            progressText.textContent = percentComplete.toFixed(2) + '%';
         }
 
         function showUploadedFile() {
