@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chunked File Upload</title>
+</head>
+<body>
+
+<input type="file" id="fileInput" />
+<button onclick="uploadFile()">Upload File</button>
+<div id="uploadedFileContainer"></div>
+
+<script>
+    function uploadFile() {
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+
+        const chunkSize = 1024 * 1024; // 1MB chunks
+        const totalChunks = Math.ceil(file.size / chunkSize);
+        let currentChunk = 0;
+
+        function uploadChunk() {
+            const start = currentChunk * chunkSize;
+            const end = Math.min(start + chunkSize, file.size);
+            const chunk = file.slice(start, end);
+
+            const formData = new FormData();
+            formData.append('file', chunk);
+            formData.append('totalChunks', totalChunks);
+            formData.append('currentChunk', currentChunk);
+
+            fetch('upload.php', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    currentChunk++;
+
+                    if (currentChunk < totalChunks) {
+                        uploadChunk();
+                    } else {
+                        console.log('Upload complete!');
+                        showUploadedFile();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function showUploadedFile() {
+            const uploadedFileContainer = document.getElementById('uploadedFileContainer');
+            uploadedFileContainer.innerHTML = `<p>File Uploaded Successfully!</p>`;
+            const downloadLink = document.createElement('a');
+            downloadLink.href = 'uploads/uploaded_file';
+            downloadLink.textContent = 'Download File';
+            downloadLink.download = file.name;
+            uploadedFileContainer.appendChild(downloadLink);
+        }
+
+        uploadChunk();
+    }
+</script>
+
+</body>
+</html>
