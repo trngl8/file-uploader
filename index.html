@@ -7,8 +7,11 @@
 </head>
 <body>
 
-<input type="file" id="fileInput" onchange="previewImage(event)"   />
+<input type="file" id="fileInput" onchange="preview(event)" />
 <img id="imagePreview" src="#" alt="Preview" style="max-width: 300px; max-height: 300px; display: none;">
+<video id="videoPreview" controls style="max-width: 300px; max-height: 300px; display: none;">
+    Your browser does not support the video tag.
+</video>
 <button onclick="uploadFile()">Upload File</button>
 <div id="progressContainer">
     <progress id="progressBar" value="0" max="100"></progress>
@@ -17,24 +20,33 @@
 <div id="uploadedFileContainer"></div>
 
 <script>
-    function previewImage(event) {
-        const imageInput = document.getElementById('imageInput');
+    function preview(event) {
         const imagePreview = document.getElementById('imagePreview');
+        const videoPreview = document.getElementById('videoPreview');
 
         const file = event.target.files[0];
+        const extension = event.target.files[0].name.split('.').pop().toLowerCase();
 
         if (file) {
             const reader = new FileReader();
 
             reader.onload = function (e) {
-                imagePreview.src = e.target.result;
-                imagePreview.style.display = 'block';
+                if (extension === 'mp4') {
+                    videoPreview.src = e.target.result;
+                    videoPreview.style.display = 'block';
+                } else if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                }
             };
 
             reader.readAsDataURL(file);
         } else {
             imagePreview.src = '#';
             imagePreview.style.display = 'none';
+
+            videoPreview.src = '#';
+            videoPreview.style.display = 'none';
         }
     }
 
