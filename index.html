@@ -7,7 +7,8 @@
 </head>
 <body>
 
-<input type="file" id="fileInput" />
+<input type="file" id="fileInput" onchange="previewImage(event)"   />
+<img id="imagePreview" src="#" alt="Preview" style="max-width: 300px; max-height: 300px; display: none;">
 <button onclick="uploadFile()">Upload File</button>
 <div id="progressContainer">
     <progress id="progressBar" value="0" max="100"></progress>
@@ -16,6 +17,27 @@
 <div id="uploadedFileContainer"></div>
 
 <script>
+    function previewImage(event) {
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+            };
+
+            reader.readAsDataURL(file);
+        } else {
+            imagePreview.src = '#';
+            imagePreview.style.display = 'none';
+        }
+    }
+
     function uploadFile() {
         const fileInput = document.getElementById('fileInput');
         const file = fileInput.files[0];
@@ -67,7 +89,7 @@
 
         function showUploadedFile() {
             const uploadedFileContainer = document.getElementById('uploadedFileContainer');
-            uploadedFileContainer.innerHTML = `<p>File Uploaded Successfully!</p>`;
+            uploadedFileContainer.innerHTML = `<p>File uploaded successfully!</p>`;
             const downloadLink = document.createElement('a');
             downloadLink.href = 'uploads/uploaded_file';
             downloadLink.textContent = 'Download File';
