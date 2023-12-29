@@ -1,7 +1,7 @@
 .idea
 .env
 
-vendors
+vendor
 node_modules
 uploads
 
