@@ -1,7 +1,7 @@
 {
   "name": "trngl8/file-uploader",
   "require": {
-    "php": ">=8.2",
+    "php": ">=8.1",
     "ext-json": "*"
   },
   "require-dev": {
