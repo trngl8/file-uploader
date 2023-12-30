@@ -1,23 +1,34 @@
 <?php
 
+require_once __DIR__.'/vendor/autoload.php';
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+
+$request = Request::createFromGlobals();
+
+if (!$request->files->get('file')) {
+    $response = new JsonResponse(['result' => 'error', 'message' => 'No file uploaded'], Response::HTTP_BAD_REQUEST);
+    $response->send();
+    exit;
+}
+
+if(!$request->request->has('totalChunks') || !$request->request->has('currentChunk')) {
+    $response = new JsonResponse(['result' => 'error', 'message' => 'Invalid request'], Response::HTTP_BAD_REQUEST);
+    $response->send();
+    exit;
+}
+
 $uploadDir = 'uploads/';
 $fileName = 'uploaded_file';
 
-if (empty($_FILES['file'])) {
-    echo json_encode(['status' => 'error', 'message' => 'No file uploaded']);
-    exit;
-}
-
-if(!isset($_POST['totalChunks']) || !isset($_POST['currentChunk'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid request']);
-    exit;
-}
-
-$totalChunks = $_POST['totalChunks'];
-$currentChunk = $_POST['currentChunk'];
+$totalChunks = $request->request->get('totalChunks');
+$currentChunk = $request->request->get('currentChunk');
 $tempFileName = $uploadDir . $fileName . '_' . $currentChunk;
 
-move_uploaded_file($_FILES['file']['tmp_name'], $tempFileName);
+move_uploaded_file($request->files->get('file')->getRealPath(), $tempFileName);
 
 if ($currentChunk == $totalChunks - 1) {
     $finalFileName = $uploadDir . $fileName;
@@ -31,8 +42,9 @@ if ($currentChunk == $totalChunks - 1) {
     }
 
     fclose($finalFile);
-    echo json_encode(['status' => 'success', 'message' => 'File uploaded successfully']);
+    $response = new JsonResponse(['result' => 'success', 'message' => 'File uploaded successfully']);
+    $response->send();
 }
 
-echo json_encode(['status' => 'success', 'message' => 'Chunk uploaded successfully']);
-
+$response = new JsonResponse(['result' => 'success', 'message' => 'Chunk uploaded successfully']);
+$response->send();
