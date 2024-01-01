@@ -22,7 +22,7 @@ if(!$request->request->has('totalChunks') || !$request->request->has('currentChu
 }
 
 $uploadDir = 'uploads/';
-$fileName = 'uploaded_file';
+$fileName = sprintf('uploaded_file.%s', $request->request->get('extension', 'unknown'));
 
 $totalChunks = $request->request->get('totalChunks');
 $currentChunk = $request->request->get('currentChunk');
@@ -42,8 +42,12 @@ if ($currentChunk == $totalChunks - 1) {
     }
 
     fclose($finalFile);
-    $response = new JsonResponse(['result' => 'success', 'message' => 'File uploaded successfully']);
+    $response = new JsonResponse([
+        'result' => 'success',
+        'message' => 'File uploaded successfully',
+        'mimetype' => mime_content_type($finalFileName)]);
     $response->send();
+    exit;
 }
 
 $response = new JsonResponse(['result' => 'success', 'message' => 'Chunk uploaded successfully']);
