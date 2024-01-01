@@ -3,6 +3,7 @@
   "require": {
     "php": ">=8.2",
     "ext-json": "*",
+    "ext-fileinfo": "*",
     "symfony/http-foundation": "^7.0"
   },
   "require-dev": {

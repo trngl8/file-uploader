@@ -6,7 +6,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-
 $request = Request::createFromGlobals();
 
 if (!$request->files->get('file')) {
@@ -21,8 +20,8 @@ if(!$request->request->has('totalChunks') || !$request->request->has('currentChu
     exit;
 }
 
-$uploadDir = 'uploads/';
-$fileName = 'uploaded_file';
+$uploadDir = 'uploads' . DIRECTORY_SEPARATOR;
+$fileName = sprintf('uploaded_file.%s', $request->request->get('extension', 'unknown'));
 
 $totalChunks = $request->request->get('totalChunks');
 $currentChunk = $request->request->get('currentChunk');
@@ -42,8 +41,12 @@ if ($currentChunk == $totalChunks - 1) {
     }
 
     fclose($finalFile);
-    $response = new JsonResponse(['result' => 'success', 'message' => 'File uploaded successfully']);
+    $response = new JsonResponse([
+        'result' => 'success',
+        'message' => 'File uploaded successfully',
+        'mimetype' => mime_content_type($finalFileName)]);
     $response->send();
+    exit;
 }
 
 $response = new JsonResponse(['result' => 'success', 'message' => 'Chunk uploaded successfully']);
