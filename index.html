@@ -4,20 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chunked File Upload</title>
+    <link rel="stylesheet" href="assets/default.css">
+<!--    <link rel="stylesheet" href="assets/main.css">-->
 </head>
 <body>
 
-<input type="file" id="fileInput" onchange="preview(event)" />
-<img id="imagePreview" src="#" alt="Preview" style="max-width: 300px; max-height: 300px; display: none;">
-<video id="videoPreview" controls style="max-width: 300px; max-height: 300px; display: none;">
-    Your browser does not support the video tag.
-</video>
-<button onclick="uploadFile()">Upload File</button>
-<div id="progressContainer">
-    <progress id="progressBar" value="0" max="100"></progress>
-    <span id="progressText">0%</span>
+<div id="uploader-container">
+    <label for="fileInput" id="fileLabel">Choose a File</label>
+    <input type="file" id="fileInput" onchange="preview(event)" />
+
+    <div id="progressContainer">
+        <div id="progressBar">
+            <div id="progressBarFill"></div>
+        </div>
+        <div id="progressText">0%</div>
+    </div>
+
+    <div id="previewContainer">
+        <video id="videoPreview" controls class="preview">
+            Your browser does not support the video tag.
+        </video>
+        <img id="imagePreview" src="#" alt="Preview" class="preview">
+    </div>
+
+    <button id="uploadButton" onclick="uploadFile()">Upload File</button>
+
+    <div id="uploadedFileContainer"></div>
 </div>
-<div id="uploadedFileContainer"></div>
 
 <script>
     function preview(event) {
