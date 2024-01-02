@@ -5,6 +5,7 @@ require_once __DIR__.'/vendor/autoload.php';
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Triangle\Uploader\Filesystem;
 
 $request = Request::createFromGlobals();
 
@@ -20,6 +21,8 @@ if(!$request->request->has('totalChunks') || !$request->request->has('currentChu
     exit;
 }
 
+$filesystem = new Filesystem();
+
 $uploadDir = 'uploads' . DIRECTORY_SEPARATOR;
 $fileName = sprintf('uploaded_file.%s', $request->request->get('extension', 'unknown'));
 
@@ -27,24 +30,24 @@ $totalChunks = $request->request->get('totalChunks');
 $currentChunk = $request->request->get('currentChunk');
 $tempFileName = $uploadDir . $fileName . '_' . $currentChunk;
 
-move_uploaded_file($request->files->get('file')->getRealPath(), $tempFileName);
+$filesystem->moveUploadedFile($request->files->get('file'), $tempFileName);
 
 if ($currentChunk == $totalChunks - 1) {
     $finalFileName = $uploadDir . $fileName;
-    $finalFile = fopen($finalFileName, 'wb');
+    $finalFile = $filesystem->open($finalFileName, 'wb');
 
     for ($i = 0; $i < $totalChunks; $i++) {
         $tempFileName = $uploadDir . $fileName . '_' . $i;
         $chunk = file_get_contents($tempFileName);
-        fwrite($finalFile, $chunk);
-        unlink($tempFileName);
+        $filesystem->writeFile($finalFile, $chunk);
+        $filesystem->deleteFile($tempFileName);
     }
 
-    fclose($finalFile);
+    $filesystem->close($finalFile);
     $response = new JsonResponse([
         'result' => 'success',
         'message' => 'File uploaded successfully',
-        'mimetype' => mime_content_type($finalFileName)]);
+        'mimetype' => $filesystem->getContentType($finalFileName)]);
     $response->send();
     exit;
 }
