@@ -35,6 +35,7 @@ jobs:
       - name: Create var directory and test file
         run: |
           mkdir -p var
+          mkdir -p upload
           touch var/test.txt
 
       - name: Run test suite
