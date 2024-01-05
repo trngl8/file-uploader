@@ -4,25 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chunked File Upload</title>
+    <link rel="stylesheet" href="assets/default.css">
+    <link rel="stylesheet" href="assets/uploader.css">
 </head>
 <body>
 
-<input type="file" id="fileInput" onchange="preview(event)" />
-<img id="imagePreview" src="#" alt="Preview" style="max-width: 300px; max-height: 300px; display: none;">
-<video id="videoPreview" controls style="max-width: 300px; max-height: 300px; display: none;">
-    Your browser does not support the video tag.
-</video>
-<button onclick="uploadFile()">Upload File</button>
-<div id="progressContainer">
-    <progress id="progressBar" value="0" max="100"></progress>
-    <span id="progressText">0%</span>
+<div id="uploader-container">
+    <div id="previewContainer">
+        <video id="videoPreview" controls class="preview">
+            Your browser does not support the video tag.
+        </video>
+        <img id="imagePreview" src="#" alt="Preview" class="preview">
+    </div>
+
+    <label for="fileInput" id="fileLabel">Choose a File</label>
+    <input type="file" id="fileInput" onchange="preview(event)" />
+    <button id="uploadButton" onclick="uploadFile()">Upload File</button>
+
+    <div id="progressContainer">
+        <div id="progressBar">
+            <div id="progressBarFill"></div>
+        </div>
+        <div id="progressText">0%</div>
+    </div>
+
+    <div id="uploadedFileContainer"></div>
 </div>
-<div id="uploadedFileContainer"></div>
 
 <script>
     function preview(event) {
         const imagePreview = document.getElementById('imagePreview');
         const videoPreview = document.getElementById('videoPreview');
+        const fileLabel = document.getElementById('fileLabel');
+        const uploadButton = document.getElementById('uploadButton');
 
         const file = event.target.files[0];
         const extension = event.target.files[0].name.split('.').pop().toLowerCase();
@@ -31,6 +45,8 @@
             const reader = new FileReader();
 
             reader.onload = function (e) {
+                fileLabel.style.display = 'none';
+                uploadButton.style.display = 'block';
                 if (extension === 'mp4') {
                     videoPreview.src = e.target.result;
                     videoPreview.style.display = 'block';
@@ -92,11 +108,18 @@
         }
 
         function updateProgress(percentComplete) {
-            const progressBar = document.getElementById('progressBar');
+            console.log(percentComplete)
+            const progressBarFill = document.getElementById('progressBarFill');
             const progressText = document.getElementById('progressText');
+            const progressContainer = document.getElementById('progressContainer');
 
-            progressBar.value = percentComplete;
+            progressContainer.style.display = 'block';
+            progressBarFill.style.width = percentComplete + '%';
             progressText.textContent = percentComplete.toFixed(2) + '%';
+
+            if (percentComplete >= 100) {
+                //progressContainer.style.display = 'none';
+            }
         }
 
         function showUploadedFile() {
