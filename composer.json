@@ -1,0 +1,27 @@
+{
+  "name": "trngl8/file-uploader",
+  "require": {
+    "php": ">=8.2",
+    "ext-json": "*",
+    "ext-fileinfo": "*",
+    "symfony/http-foundation": "^7.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.5.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Triangle\\Uploader\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Triangle\\Uploader\\Tests\\": "tests"
+    }
+  },
+  "scripts": {
+    "tests": [
+      "php vendor/bin/phpunit tests"
+    ]
+  }
+}

@@ -1,7 +1,8 @@
 .idea
 .env
+.phpunit.result.cache
 
-vendors
+vendor
 node_modules
 uploads
-
+var
