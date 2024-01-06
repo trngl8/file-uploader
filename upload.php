@@ -30,8 +30,6 @@ $totalChunks = $request->request->get('totalChunks');
 $currentChunk = $request->request->get('currentChunk');
 $tempFileName = $uploadDir . $fileName . '_' . $currentChunk;
 
-//$filesystem->moveUploadedFile($request->files->get('file'), $tempFileName);
-
 move_uploaded_file($request->files->get('file')->getRealPath(), $tempFileName);
 
 if ($currentChunk == $totalChunks - 1) {
