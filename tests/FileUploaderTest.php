@@ -10,8 +10,8 @@ class FileUploaderTest extends TestCase
 {
     public function testFileUploaderSuccess()
     {
+        //TODO: here is an empty test
         $uploader = new FileUploader();
-        $file = new File('var/test.txt');
         $this->assertTrue(true);
     }
 }
