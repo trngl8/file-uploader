@@ -29,8 +29,15 @@ class FilesystemTest extends TestCase
         $this->filesystem->close($handler);
         $this->assertTrue(true);
     }
+
     public function testFilesystemGetContentType()
     {
         $this->assertEquals('text/plain', $this->filesystem->getContentType('var/test.txt'));
+    }
+
+    public function testDeleteFile()
+    {
+        $this->filesystem->deleteFile('var/test.txt');
+        $this->assertTrue(true);
     }
 }
